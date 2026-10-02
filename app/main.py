@@ -44,6 +44,10 @@ async def translate_audio(
     if not file.filename:
         raise HTTPException(status_code=400, detail="No file was uploaded.")
 
+    if not await file.read(1):
+        raise HTTPException(status_code=400, detail="The uploaded file is empty.")
+    await file.seek(0)
+
     transcription = await service.transcribe_audio(file)
     translation = await service.translate_text(transcription, target_language)
 
